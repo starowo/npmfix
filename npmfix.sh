@@ -23,9 +23,9 @@ declare -A VULN_VERSIONS=(
   [supports-hyperlinks]="4.1.1"
 )
 
-DRY_RUN="${DRY_RUN:-0}"                # 置 1 仅打印将要执行的动作
-WRITE_OVERRIDES="${WRITE_OVERRIDES:-1}"# 置 0 不写 package.json 的 "overrides"
-BACKUP_PKG_JSON="${BACKUP_PKG_JSON:-1}"# 置 0 不备份 package.json
+DRY_RUN="${DRY_RUN:-0}"
+WRITE_OVERRIDES="${WRITE_OVERRIDES:-1}"
+BACKUP_PKG_JSON="${BACKUP_PKG_JSON:-1}"
 
 npm_root_global() { npm root -g 2>/dev/null | tr -d '\r'; }
 
@@ -117,7 +117,6 @@ HIT_GLOBAL=0
 for PKG in "${!VULN_VERSIONS[@]}"; do
   BAD="${VULN_VERSIONS[$PKG]}"
 
-  # --- 本地 ---
   LV="$(check_local_version "$PKG" || true)"
   if [[ -n "$LV" && "$LV" == "$BAD" ]]; then
     ((HIT_LOCAL++))
@@ -126,7 +125,6 @@ for PKG in "${!VULN_VERSIONS[@]}"; do
     add_override_if_needed "$PKG"
   fi
 
-  # --- 全局 ---
   GV="$(check_global_version "$PKG" || true)"
   if [[ -n "$GV" && "$GV" == "$BAD" ]]; then
     ((HIT_GLOBAL++))
